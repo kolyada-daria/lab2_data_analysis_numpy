@@ -1,9 +1,8 @@
 import os  # Модуль для работы с операционной системой (создание папок, проверка путей)
 import numpy as np  # Основная библиотека для вычислений (массивы, матрицы)
 import pandas as pd  # Библиотека для работы с таблицами (чтение CSV)
-import matplotlib.pyplot as plt  # Для построения графиков
 import seaborn as sns  # Для тепловых карт
-
+from typing import Dict, Union, List, Optional
 import matplotlib
 # Чтобы в тестах не появлялись всплывающие окна
 matplotlib.use('Agg')
@@ -19,7 +18,7 @@ os.makedirs("plots", exist_ok=True)
 # 1. СОЗДАНИЕ И ОБРАБОТКА МАССИВОВ
 # ============================================================
 
-def create_vector():
+def create_vector() -> np.ndarray:
     """
     Создание массива от 0 до 9.
     Использует np.arange, который работает как встроенный range(), но возвращает ndarray.
@@ -29,7 +28,7 @@ def create_vector():
     return np.arange(10)
 
 
-def create_matrix():
+def create_matrix()-> np.ndarray:
     """
     Создание матрицы 5x5 со случайными числами в диапазоне [0,1].
     Returns:
@@ -38,7 +37,7 @@ def create_matrix():
     return np.random.rand(5, 5)
 
 
-def reshape_vector(vec):
+def reshape_vector(vec: np.ndarray) -> np.ndarray:
     """
     Преобразование (10,) -> (2,5).
     Изменяет форму массива без изменения его данных.
@@ -51,9 +50,11 @@ def reshape_vector(vec):
     return vec.reshape(2, 5)
 
 
-def transpose_matrix(mat):
+def transpose_matrix(mat: np.ndarray) -> np.ndarray:
     """
     Транспонирование матрицы.
+    Args:
+        mat (np.ndarray): входная матрица.
     Returns:
         numpy.ndarray: транспонированная матрица
     """
@@ -64,7 +65,7 @@ def transpose_matrix(mat):
 # 2. ВЕКТОРНЫЕ ОПЕРАЦИИ
 # ============================================================
 
-def vector_add(a, b):
+def vector_add(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """
     Сложение векторов одинаковой длины (векторизация без циклов).
     Каждый элемент a[i] складывается с b[i].
@@ -77,7 +78,7 @@ def vector_add(a, b):
     return a + b
 
 
-def scalar_multiply(vec, scalar):
+def scalar_multiply(vec: np.ndarray, scalar: Union[float, int]) -> np.ndarray:
     """
     Умножение вектора на число: каждый элемент массива умножается на скаляр.
     Args:
@@ -89,7 +90,7 @@ def scalar_multiply(vec, scalar):
     return vec * scalar
 
 
-def elementwise_multiply(a, b):
+def elementwise_multiply(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """
     Поэлементное умножение.
     Args:
@@ -101,7 +102,7 @@ def elementwise_multiply(a, b):
     return a * b
 
 
-def dot_product(a, b):
+def dot_product(a: np.ndarray, b: np.ndarray) -> float:
     """
     Скалярное произведение.
     Args:
@@ -117,7 +118,7 @@ def dot_product(a, b):
 # 3. МАТРИЧНЫЕ ОПЕРАЦИИ
 # ============================================================
 
-def matrix_multiply(a, b):
+def matrix_multiply(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """
     Умножение матриц.
     Args:
@@ -129,7 +130,7 @@ def matrix_multiply(a, b):
     return a @ b
 
 
-def matrix_determinant(a):
+def matrix_determinant(a: np.ndarray) -> float:
     """
     Определитель матрицы.
     Args:
@@ -140,7 +141,7 @@ def matrix_determinant(a):
     return np.linalg.det(a)
 
 
-def matrix_inverse(a):
+def matrix_inverse(a: np.ndarray) -> np.ndarray:
     """
     Обратная матрица.
     Args:
@@ -151,7 +152,7 @@ def matrix_inverse(a):
     return np.linalg.inv(a)
 
 
-def solve_linear_system(a, b):
+def solve_linear_system(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """
     Решение системы Ax = b.
     Args:
@@ -167,7 +168,7 @@ def solve_linear_system(a, b):
 # 4. СТАТИСТИЧЕСКИЙ АНАЛИЗ
 # ============================================================
 
-def load_dataset(path="data/students_scores.csv"):
+def load_dataset(path="data/students_scores.csv")-> np.ndarray:
     """
     Загрузить CSV и вернуть NumPy массив.
     Использует Pandas для чтения и .to_numpy() для конвертации в массив NumPy.
@@ -187,7 +188,7 @@ def load_dataset(path="data/students_scores.csv"):
     return df.to_numpy()
 
 
-def statistical_analysis(data):
+def statistical_analysis(data: np.ndarray) -> Dict[str, Union[float, np.ndarray]]:
     """
     Словарь со статистическими показателями.
     Вычисляет основные статистические метрики для набора данных.
@@ -202,8 +203,7 @@ def statistical_analysis(data):
     Args:
         data (numpy.ndarray): одномерный массив данных
     Returns:
-        dict: словарь со статистическими показателями
-    """
+        Dict[str, Union[float, np.ndarray]]: словарь с метриками (mean, std, median и т.д.).    """
     # Определяем ось: если массив двумерный (таблица), считаем по столбцам (axis=0)
     # Если одномерный (тесты), считаем по всему массиву (axis=None)
     ax = 0 if data.ndim > 1 else None
@@ -218,9 +218,9 @@ def statistical_analysis(data):
     }
 
 
-def normalize_data(data):
+def normalize_data(data: np.ndarray) -> np.ndarray:
     """
-    Min-Max нормализация.
+    Min-Max нормализация данных.
     Формула: (x - min) / (max - min)
     Args:
         data (numpy.ndarray): входной массив данных
@@ -236,11 +236,12 @@ def normalize_data(data):
 # 5. ВИЗУАЛИЗАЦИЯ
 # ============================================================
 
-def plot_histogram(data, title="Распределение оценок"):
+def plot_histogram(data: np.ndarray, title: str = "Распределение оценок") -> None:
     """
-    Гистограмма распределения оценок.
+    Строит и сохраняет гистограмму распределения данных.
     Args:
         data (numpy.ndarray): данные для гистограммы
+        title (str): заголовок графика и часть имени файла.
     """
     plt.figure(figsize=(8, 5))
     plt.hist(data, bins=15, color='skyblue', edgecolor='black', alpha=0.7, label='Количество студентов')
@@ -256,12 +257,15 @@ def plot_histogram(data, title="Распределение оценок"):
     plt.close() # Закрываем график, чтобы освободить оперативную память
 
 
-def plot_heatmap(matrix, labels=None):
+def plot_heatmap(matrix: np.ndarray, labels: Optional[List[str]] = None) -> None:
     """
-    Тепловая карта корреляции.
+    Строит тепловую карту корреляционной матрицы.
     Чем ярче цвет, тем сильнее связь между переменными.
     Args:
         matrix (numpy.ndarray): матрица корреляции
+        labels (Optional[List[str]]): список названий столбцов для осей.
+    Returns:
+        None: результат сохраняется в папке 'plots/'
     """
     plt.figure(figsize=(8, 6))
 
@@ -282,12 +286,13 @@ def plot_heatmap(matrix, labels=None):
     plt.close()
 
 
-def plot_line(x, y, labels=None):
+def plot_line(x: np.ndarray, y: np.ndarray, labels: Optional[List[str]] = None) -> None:
     """
     График зависимости: студент -> оценка.
     Args:
         x (numpy.ndarray): номера студентов
         y (numpy.ndarray): оценки студентов
+        labels (Optional[List[str]]): Легенда для каждой линии.
     """
     plt.figure(figsize=(12, 6))
 
